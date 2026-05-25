@@ -2,87 +2,152 @@ import pygame
 
 pygame.init()
 
+# buscar no The Spriters Rescue
+
+# ==================================
 # TELA
+# ==================================
+
 LARGURA = 1200
 ALTURA = 700
 
-tela = pygame.display.set_mode((LARGURA, ALTURA))
-pygame.display.set_caption("3 Animações")
+tela = pygame.display.set_mode(
+    (LARGURA, ALTURA)
+)
+
+pygame.display.set_caption(
+    "Animações"
+)
 
 clock = pygame.time.Clock()
 
-# ==========================
-# SPRITESHEETS
-# ==========================
+# ==================================
+# CARREGAR SPRITES
+# ==================================
 
-sonic_sheet = pygame.image.load("sonic.png").convert_alpha()
-miku_sheet = pygame.image.load("miku.png").convert_alpha()
-spider_sheet = pygame.image.load("spiderman.png").convert_alpha()
+sonic_sheet = pygame.image.load(
+    "sonic.png"
+).convert_alpha()
 
-# ==========================
-# SONIC (ANIMAÇÃO CONSTANTE)
-# ==========================
+miku_sheet = pygame.image.load(
+    "miku.png"
+).convert_alpha()
+
+spider_sheet = pygame.image.load(
+    "spiderman.png"
+).convert_alpha()
+
+# ==================================
+# SONIC
+# CORRENDO SEMPRE
+# ==================================
 
 frames_sonic = []
 
 for i in range(8):
 
     frame = sonic_sheet.subsurface(
-        (0 + i*32,110,32,40)
+        (
+            i * 32,
+            110,
+            32,
+            40
+        )
     )
 
-    frames_sonic.append(
-        pygame.transform.scale(frame,(80,80))
+    frame = pygame.transform.scale(
+        frame,
+        (90,90)
     )
 
-frame_sonic = 0
+    frames_sonic.append(frame)
+
 tempo_sonic = 0
 
-# ==========================
-# MIKU (SEGURANDO D)
-# ==========================
+# ==================================
+# MIKU
+# ANDAR SEGURANDO D
+# ==================================
 
 frames_miku = []
+
+largura_miku = 18
+altura_miku = 30
+
+inicio_x = 5
+inicio_y = 105
 
 for i in range(4):
 
     frame = miku_sheet.subsurface(
-        (10+i*20,25,20,28)
+        (
+            inicio_x + i*20,
+            inicio_y,
+            largura_miku,
+            altura_miku
+        )
     )
 
-    frames_miku.append(
-        pygame.transform.scale(frame,(80,100))
+    frame = pygame.transform.scale(
+        frame,
+        (80,100)
     )
 
-frame_miku = 0
+    frames_miku.append(frame)
+
 tempo_miku = 0
 
 x_miku = 100
-y_miku = 450
+y_miku = 500
 
-# ==========================
-# SPIDERMAN (UMA VEZ)
-# ==========================
-
-animar_spider = False
+# ==================================
+# SPIDERMAN
+# PULO AO SPACE
+# ==================================
 
 frames_spider = []
+
+largura_spider = 50
+altura_spider = 70
+
+inicio_x = 15
+inicio_y = 350
 
 for i in range(6):
 
     frame = spider_sheet.subsurface(
-        (10+i*60,220,60,80)
+        (
+            inicio_x + i*55,
+            inicio_y,
+            largura_spider,
+            altura_spider
+        )
     )
 
-    frames_spider.append(
-        pygame.transform.scale(frame,(120,120))
+    frame = pygame.transform.scale(
+        frame,
+        (120,120)
     )
 
-frame_spider = 0
+    frames_spider.append(frame)
 
-# ==========================
+tempo_spider = 0
+
+animar_spider = False
+
+x_spider = 850
+
+y_base = 500
+
+y_spider = y_base
+
+vel_pulo = -12
+
+gravidade = 0.7
+
+# ==================================
 # LOOP
-# ==========================
+# ==================================
 
 rodando = True
 
@@ -93,66 +158,124 @@ while rodando:
     for evento in pygame.event.get():
 
         if evento.type == pygame.QUIT:
+
             rodando = False
 
         if evento.type == pygame.KEYDOWN:
 
             if evento.key == pygame.K_SPACE:
 
-                animar_spider = True
-                frame_spider = 0
+                if not animar_spider:
+
+                    animar_spider = True
+
+                    y_spider = y_base
+
+                    vel_pulo = -12
+
+                    tempo_spider = 0
 
     teclas = pygame.key.get_pressed()
 
     tela.fill((30,30,30))
 
-    # SONIC CONSTANTE
+    # ==========================
+    # SONIC
+    # ==========================
+
     tempo_sonic += 0.15
 
     if tempo_sonic >= len(frames_sonic):
 
         tempo_sonic = 0
 
-    frame_sonic = int(tempo_sonic)
-
-    tela.blit(
-        frames_sonic[frame_sonic],
-        (150,150)
+    frame_sonic = int(
+        tempo_sonic
     )
 
-    # MIKU SEGURANDO D
+    tela.blit(
+
+        frames_sonic[
+            frame_sonic
+        ],
+
+        (150,150)
+
+    )
+
+    # ==========================
+    # MIKU
+    # ==========================
 
     if teclas[pygame.K_d]:
 
-        x_miku += 4
+        x_miku += 3
 
-        tempo_miku += 0.2
+        tempo_miku += 0.15
 
-        if tempo_miku >= len(frames_miku):
+        if tempo_miku >= len(
+            frames_miku
+        ):
 
             tempo_miku = 0
 
-    frame_miku = int(tempo_miku)
-
-    tela.blit(
-        frames_miku[frame_miku],
-        (x_miku,y_miku)
+    frame_miku = int(
+        tempo_miku
     )
 
-    # SPIDERMAN UMA VEZ
+    tela.blit(
+
+        frames_miku[
+            frame_miku
+        ],
+
+        (
+            x_miku,
+            y_miku
+        )
+
+    )
+
+    # ==========================
+    # SPIDERMAN
+    # ==========================
 
     if animar_spider:
 
-        tela.blit(
-            frames_spider[frame_spider],
-            (800,350)
-        )
+        tempo_spider += 0.1
 
-        frame_spider += 0.2
+        if tempo_spider >= len(
+            frames_spider
+        ):
 
-        if frame_spider >= len(frames_spider):
+            tempo_spider = 0
+
+        y_spider += vel_pulo
+
+        vel_pulo += gravidade
+
+        if y_spider >= y_base:
+
+            y_spider = y_base
 
             animar_spider = False
+
+    frame_spider = int(
+        tempo_spider
+    )
+
+    tela.blit(
+
+        frames_spider[
+            frame_spider
+        ],
+
+        (
+            x_spider,
+            y_spider
+        )
+
+    )
 
     pygame.display.update()
 
